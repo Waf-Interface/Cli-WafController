@@ -3,22 +3,62 @@
 
 #include <modsecurity/modsecurity.h>
 #include <modsecurity/rules_set.h>
+#include <modsecurity/transaction.h>
 #include <string>
+#include <map>
 
+#ifdef _WIN32
+    #define WAF_GHM_API __declspec(dllexport)  // Windows specific
+#else
+    #define WAF_GHM_API __attribute__((visibility("default")))  // Linux specific
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// Declare functions to interact with the WafGhm class
+WAF_GHM_API bool initialize();
+WAF_GHM_API bool loadRule(const char* rule);
+WAF_GHM_API bool authenticate(const char* username, const char* password);
+WAF_GHM_API void shutdown();
+WAF_GHM_API bool setModSecurityPower(bool enable);
+WAF_GHM_API bool logUserAccess(const char* username);
+WAF_GHM_API bool showLogs();
+WAF_GHM_API bool toggleProtectionForHost(const char* host, bool enable);
+
+// Declare new function to check if ModSecurity is enabled
+WAF_GHM_API bool isModSecurityEnabled();
+
+#ifdef __cplusplus
+}
+#endif
+
+// C++ Class Declaration (non-exposed directly to ctypes)
 class WafGhm {
 public:
     WafGhm();
     ~WafGhm();
+
     bool initialize();
     bool loadRule(const std::string& rule);
     bool authenticate(const std::string& username, const std::string& password);
     void shutdown();
+    bool setModSecurityPower(bool enable);
+    bool logUserAccess(const std::string& username);
+    bool showLogs();
+    bool toggleProtectionForHost(const std::string& host, bool enable);
+    bool isModSecurityEnabled() const;  // New method to check if ModSecurity is enabled
 
 private:
-    ModSecurity::ModSecurity* modsec;
-    ModSecurity::RulesSet* rules;
+    modsecurity::ModSecurity* modsec;
+    modsecurity::RulesSet* rules;
+    bool modSecurityEnabled;
+    std::map<std::string, bool> hostProtectionMap;  
+
     const std::string validUsername = "test";
     const std::string validPassword = "test";
+    const std::string logFile = "user_access.log";
 };
 
 #endif // WAF_GHM_H

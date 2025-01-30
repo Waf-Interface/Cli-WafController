@@ -48,7 +48,7 @@ public:
     bool logUserAccess(const std::string& username);
     bool showLogs();
     bool toggleProtectionForHost(const std::string& host, bool enable);
-    bool isModSecurityEnabled() const;  // New method to check if ModSecurity is enabled
+    bool isModSecurityEnabled() const;  
 
 private:
     modsecurity::ModSecurity* modsec;

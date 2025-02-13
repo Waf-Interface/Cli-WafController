@@ -17,7 +17,6 @@
 extern "C" {
 #endif
 
-// Declare functions to interact with the WafGhm class
 WAF_GHM_API bool initialize();
 WAF_GHM_API bool loadRule(const char* rule);
 WAF_GHM_API bool authenticate(const char* username, const char* password);
@@ -26,15 +25,16 @@ WAF_GHM_API bool setModSecurityPower(bool enable);
 WAF_GHM_API bool logUserAccess(const char* username);
 WAF_GHM_API bool showLogs();
 WAF_GHM_API bool toggleProtectionForHost(const char* host, bool enable);
-
-// Declare new function to check if ModSecurity is enabled
 WAF_GHM_API bool isModSecurityEnabled();
+WAF_GHM_API bool showAuditLogs();
+WAF_GHM_API bool clearAuditLogs();
+WAF_GHM_API bool showModSecRules();
+WAF_GHM_API bool updateModSecEngineInNginxConfig(bool enable);
 
 #ifdef __cplusplus
 }
 #endif
 
-// C++ Class Declaration (non-exposed directly to ctypes)
 class WafGhm {
 public:
     WafGhm();
@@ -48,7 +48,11 @@ public:
     bool logUserAccess(const std::string& username);
     bool showLogs();
     bool toggleProtectionForHost(const std::string& host, bool enable);
-    bool isModSecurityEnabled() const;  
+    bool isModSecurityEnabled();  
+    bool showAuditLogs();
+    bool clearAuditLogs();
+    bool showModSecRules();
+    bool updateModSecEngineInNginxConfig(bool enable);
 
 private:
     modsecurity::ModSecurity* modsec;
